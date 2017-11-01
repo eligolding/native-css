@@ -50,8 +50,28 @@ function transformRules(self, rules, result) {
         }
       });
       rule.selectors.forEach(function(selector) {
-        var name = self.nameGenerator(selector.trim());
-        result[name] = obj;
+        // if name contains space then first part is name and then generate rest
+        if (/\s/.test(selector.trim())) {
+          let [firstPart, ...rest] = selector.trim().split(' ');
+          var name = self.nameGenerator(firstPart.trim());
+          if (!result[name]) {
+            result[name] = {};
+          }
+          result[name][`& ${rest.join(' ')}`] = obj;
+        } else if (/:/.test(selector.trim())) {
+          let [firstPart] = selector.trim().split(':');
+          var name = self.nameGenerator(firstPart.trim());
+          if (!result[name]) {
+            result[name] = {};
+          }
+          result[name][`${selector.match(/(\:\w*)/g).join('')}`] = obj;
+        } else {
+          var name = self.nameGenerator(selector.trim());
+          if (!result[name]) {
+            result[name] = {};
+          }
+          result[name] = Object.assign({}, result[name], obj);
+        }
       });
     }
   });
