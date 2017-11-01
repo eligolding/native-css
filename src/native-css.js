@@ -64,7 +64,7 @@ function transformRules(self, rules, result) {
           if (!result[name]) {
             result[name] = {};
           }
-          result[name][`${selector.match(/(\:\w*)/g).join('')}`] = obj;
+          result[name][`${selector.match(/(:[a-zA-Z\-]*)/g).join('')}`] = obj;
         } else {
           var name = self.nameGenerator(selector.trim());
           if (!result[name]) {
